@@ -1,12 +1,19 @@
 package clima.Model;
 
+import javax.swing.text.MutableAttributeSet;
+
 public class Posicion {
     private Double x;
     private Double y;
 
     public Posicion(Double radio, Double angulo) {
-        this.x = radio * Math.cos(angulo);
-        this.y = radio * Math.sin(angulo);
+        double cos = Math.cos(Math.toRadians(angulo));
+        double sen = Math.sin(Math.toRadians(angulo));
+        this.x = cos * radio;
+        this.y = sen * radio;
+    }
+
+    public Posicion() {
     }
 
     public Double getX() {

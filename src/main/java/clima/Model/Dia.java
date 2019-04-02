@@ -54,19 +54,19 @@ public class Dia {
         }
     }
 
-    public Boolean calcularAlineacion(Posicion p1, Posicion p2, Posicion p3)
+    private Boolean calcularAlineacion(Posicion p1, Posicion p2, Posicion p3)
     {
         //y = m x + b
         double m = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX());
-        double b = p1.getY() - (m * p1.getX());
+        //double b = p1.getY() - (m * p1.getX());
 
-        return p3.getY() == m * p3.getX() + b;
+        return p3.getY() - p1.getY() == m * p3.getX() - m  * p1.getX();
     }
 
-    //(A1.x - A3.x) * (A2.y - A3.y) - (A1.y - A3.y) * (A2.x - A3.x)
-    public Orientacion calcularOrientacion(Posicion A1, Posicion A2, Posicion A3)
-    {
-        double orientacion = ((A1.getX() - A3.getX()) * (A2.getY() - A3.getY())) - ((A1.getY() - A3.getY()) * (A2.getX() - A3.getX()));
+
+    private Orientacion calcularOrientacion(Posicion A1, Posicion A2, Posicion A3)
+    {                      //(A1.x      - A3.x     ) * (A2.y      - A3.y     ) - (A1.y      - A3.y     ) * (A2.x      - A3.x     )
+        double orientacion = (A1.getX() - A3.getX()) * (A2.getY() - A3.getY()) - (A1.getY() - A3.getY()) * (A2.getX() - A3.getX());
 
         if (orientacion >= 0)
         {

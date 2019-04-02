@@ -64,7 +64,7 @@ public class Planeta {
     }
 
     public double calcularAngulo(int dia){
-        int diaAux = dia % 365;
+        int diaAux = dia % 360;
         double grado = (diaAux * this.velocidad) % 360;
 
         if (!this.horario)

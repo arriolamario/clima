@@ -1,0 +1,15 @@
+clima\Model\Dia.class
+App.class
+clima\Model\Rest\ClimaResponse.class
+clima\Model\Rest\PeriodoResponse.class
+clima\Service\ClimaService.class
+clima\HelloAppEngine.class
+clima\Constantes.class
+clima\Controller\ClimaController.class
+clima\Database\Database.class
+clima\Model\Planeta.class
+clima\Model\Posicion.class
+clima\Thraad\Init.class
+clima\Model\Orientacion.class
+App$SparkInitFilter.class
+clima\Model\Periodo.class

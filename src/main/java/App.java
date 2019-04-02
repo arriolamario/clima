@@ -1,5 +1,7 @@
 import clima.Controller.ClimaController;
+import clima.Model.Dia;
 import clima.Model.Periodo;
+import clima.Model.Posicion;
 import clima.Model.Rest.ClimaResponse;
 import clima.Model.Rest.PeriodoResponse;
 import clima.Thraad.Init;
