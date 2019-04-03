@@ -9,9 +9,14 @@ import java.util.List;
 
 public class ClimaService {
 
+    Database database;
+
+    public ClimaService() {
+        database = new Database();
+    }
+
     public void createTables(){
         try {
-            Database database = Database.instance();
             database.createTables();
         }
         catch (Exception ex){
@@ -22,9 +27,13 @@ public class ClimaService {
     public boolean addClima(Dia dia){
         boolean result = false;
         try {
-            Database database = Database.instance();
-            result = database.insertClima(dia.getNumDia(),dia.getClima(),dia.planetas[0].getAngulo(),dia.planetas[1].getAngulo(),dia.planetas[2].getAngulo());
-
+            String clima = database.selectClima(dia.getNumDia());
+            if (clima.equals("") ){
+                result = database.insertClima(dia.getNumDia(),dia.getClima(),dia.planetas[0].getAngulo(),dia.planetas[1].getAngulo(),dia.planetas[2].getAngulo());
+            }
+            else{
+                result = database.updateClima(dia.getNumDia(),dia.getClima(),dia.planetas[0].getAngulo(),dia.planetas[1].getAngulo(),dia.planetas[2].getAngulo());
+            }
         }
         catch (Exception ex){
             System.out.println("ClimaService.addClima");
@@ -36,7 +45,6 @@ public class ClimaService {
     public String getClima(int dia){
         String result = "";
         try {
-            Database database = Database.instance();
             result = database.selectClima(dia);
         }
         catch (Exception ex){
@@ -50,7 +58,6 @@ public class ClimaService {
         List<Dia> response = new ArrayList<>();
 
         try {
-            Database database = Database.instance();
             response = database.getCantDiaClima(clima);
         }
         catch (Exception ex){
@@ -63,8 +70,17 @@ public class ClimaService {
 
     public void insertPeriodo(Periodo periodo) {
         try {
-            Database database = Database.instance();
+            List<Periodo> periodos = database.getPeriodos();
+
+            for (Periodo p : periodos){
+                if (p.getPeriodo().equals(periodo.getPeriodo())){
+                    database.updatePeriodo(periodo.getPeriodo(), periodo.getCant());
+                    return;
+                }
+            }
+
             database.insertPeriodo(periodo.getPeriodo(), periodo.getCant());
+
         }
         catch (Exception ex){
             System.out.println("ClimaService.insertPeriodo");
@@ -74,7 +90,6 @@ public class ClimaService {
     public List<Periodo> getAllPeriodo() {
         List<Periodo> periodos = new ArrayList<>();
         try {
-            Database database = Database.instance();
              periodos = database.getPeriodos();
         }
         catch (Exception ex){
@@ -86,7 +101,6 @@ public class ClimaService {
 
     public void updatePicoLuvia(Dia dia) {
         try {
-            Database database = Database.instance();
             database.updateDia(dia);
         }
         catch (Exception ex){

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
-    private Connection con;
-
-    private static final String TBL_CLIMA = "CREATE TABLE DATOS ("+
+    Connection con;
+    String url;
+    private static final String TBL_CLIMA = "CREATE TABLE IF NOT EXISTS DATOS ("+
             "DIA INT,"+
             "CLIMA VARCHAR(100),"+
             "PLANETA1 DOUBLE,"+
@@ -19,40 +19,50 @@ public class Database {
             "PRIMARY KEY (DIA),"+
             ");";
 
-    private  static  final String TBL_PERIODO = "CREATE TABLE PERIODO ("+
+    private  static  final String TBL_PERIODO = "CREATE TABLE IF NOT EXISTS PERIODO ("+
             "NOMBRE VARCHAR(100),"+
             "CANTIDAD INT,"+
             ");";
     private static Database database;
 
-    public Database() throws SQLException {
+    public Database(){
         {
-            String url = "jdbc:h2:mem:";
-            con = DriverManager.getConnection(url);
+            //url = "jdbc:h2:mem:";
+            url = "jdbc:h2:mem:meliclimabase";
+
         }
     }
 
-    public static Database instance(){
-        if (database == null){
-            try {
-                database = new Database();
-
-            }
-            catch (Exception ex){
-                System.out.println(ex);
-            }
+    private Connection instancia() throws SQLException {
+        if (con == null || con.isClosed()){
+            con = DriverManager.getConnection(url);
         }
 
-        return  database;
+        return  con;
     }
 
     public void createTables() throws SQLException{
+        Connection con = instancia();
         Statement stmt = con.createStatement();
+        /*
+        try{
+            stmt.executeUpdate("DROP TABLE EXISTS PERIODO;");
+            stmt.executeUpdate("DROP TABLE EXISTS DATOS;");
+        }
+        catch (Exception ex){
+            System.out.println(ex);
+        }
+        */
         stmt.executeUpdate(TBL_CLIMA);
         stmt.executeUpdate(TBL_PERIODO);
+        stmt.executeUpdate("COMMIT;");
+
+        stmt.close();
     }
 
     public boolean insertClima(int dia, String clima, double planeta1, double planeta2, double planeta3) throws SQLException{
+        Connection con = instancia();
+
         String sql = "INSERT INTO DATOS (DIA, CLIMA, PLANETA1, PLANETA2, PLANETA3) VALUES (?,?,?,?,?);";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setInt(1, dia);
@@ -62,21 +72,26 @@ public class Database {
         stmt.setDouble(5, planeta3);
 
         boolean result = stmt.execute();
+        stmt.close();
         return  result;
     }
 
     public boolean insertPeriodo(String nombre, int cantidad) throws SQLException{
+        Connection con = instancia();
+
         String sql = "INSERT INTO PERIODO (NOMBRE, CANTIDAD) VALUES (?,?);";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setString(1, nombre);
         stmt.setInt(2, cantidad);
 
         boolean result = stmt.execute();
-
+        stmt.close();
         return  result;
     }
 
     public String selectClima(int dia) throws SQLException{
+        Connection con = instancia();
+
         String clima = new String();
         Statement  stmt = con.createStatement();
         String sql = "SELECT * FROM DATOS WHERE DIA = " + dia + ";";
@@ -86,11 +101,13 @@ public class Database {
             clima = rs.getString("CLIMA");
         }
         rs.close();
-
+        stmt.close();
         return clima;
     }
 
     public List<Dia> getCantDiaClima(String clima) throws SQLException {
+        Connection con = instancia();
+
         List<Dia> dias = new ArrayList<>();
         Statement  stmt = con.createStatement();
         String sql = "SELECT *  FROM DATOS WHERE CLIMA = '" + clima + "';";
@@ -105,11 +122,12 @@ public class Database {
             dias.add(dia);
         }
         rs.close();
-
-        return dias;
+        stmt.close();return dias;
     }
 
     public List<Periodo> getPeriodos() throws SQLException {
+        Connection con = instancia();
+
         List<Periodo> periodos = new ArrayList<>();
         Statement  stmt = con.createStatement();
         String sql = "SELECT *  FROM PERIODO;";
@@ -124,17 +142,50 @@ public class Database {
             periodos.add(periodo);
         }
         rs.close();
+        stmt.close();
 
         return periodos;
     }
 
 
     public void updateDia(Dia dia) throws SQLException {
+        Connection con = instancia();
+
         String sql = "UPDATE DATOS SET CLIMA = ? WHERE DIA = ?;";
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.setString(1, dia.getClima());
         stmt.setInt(2, dia.getNumDia());
 
         stmt.execute();
+        stmt.close();
+    }
+
+    public boolean updateClima(int dia, String clima, Double planeta1, Double planeta2, Double planeta3) throws SQLException {
+        Connection con = instancia();
+
+        String sql = "UPDATE DATOS SET CLIMA = ?, PLANETA1 = ?, PLANETA2 = ?, PLANETA3 = ? WHERE DIA = ?;";
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, clima);
+        stmt.setDouble(2, planeta1 );
+        stmt.setDouble(3, planeta2);
+        stmt.setDouble(4, planeta3);
+        stmt.setInt(5, dia);
+
+        boolean result = stmt.execute();
+        stmt.close();
+        return  result;
+    }
+
+    public boolean updatePeriodo(String nombre, int cantidad) throws SQLException {
+        Connection con = instancia();
+
+        String sql = "UPDATE PERIODO SET CANTIDAD = ? WHERE NOMBRE = ?;";
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setInt(1, cantidad);
+        stmt.setString(2, nombre);
+
+        boolean result = stmt.execute();
+        stmt.close();
+        return  result;
     }
 }

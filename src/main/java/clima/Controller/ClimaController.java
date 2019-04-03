@@ -6,6 +6,7 @@ import clima.Model.Periodo;
 import clima.Model.Rest.ClimaResponse;
 import clima.Model.Rest.PeriodoResponse;
 import clima.Service.ClimaService;
+import clima.Thraad.Init;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,14 @@ public class ClimaController {
     public ClimaResponse getClima(int dia){
         ClimaResponse response = new ClimaResponse(dia);
 
-        response.setClima(climaService.getClima(dia));
+        String clima = climaService.getClima(dia);
+
+        if (clima.equals("")){
+            new Init().tarea();
+            clima = climaService.getClima(dia);
+        }
+
+        response.setClima(clima);
 
         return response;
     }

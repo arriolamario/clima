@@ -7,6 +7,7 @@ import clima.Model.Planeta;
 import clima.Service.ClimaService;
 import org.apache.log4j.pattern.LineSeparatorPatternConverter;
 
+import javax.sound.midi.Soundbank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class Init extends Thread {
 
     @Override
     public void run() {
+        tarea();
+    }
+    public void tarea(){
         ClimaService climaService = new ClimaService();
         climaService.createTables();
         int days = DAYYEAR * CANTYEAR;
@@ -32,7 +36,6 @@ public class Init extends Thread {
         String periodoActual = "";
         List<Dia> dias = new ArrayList<>();
         for (int i = 0; i < days; i++) {
-
             Planeta[] planestas = new Planeta[3];
             planestas[0] = new Planeta("Ferengi",1,500,true);
             planestas[1] = new Planeta("Betasoide",3,2000,true);
@@ -40,7 +43,7 @@ public class Init extends Thread {
 
             Dia dia = new Dia(planestas, i);
 
-            if (periodoActual == "" || periodoActual != dia.getClima()){
+            if (periodoActual.equals("") || periodoActual != dia.getClima()){
                 periodoActual = dia.getClima();
                 for (Periodo periodo : periodos){
                     if (periodoActual == periodo.getPeriodo()){
@@ -55,7 +58,6 @@ public class Init extends Thread {
                     perimetroMaximo = perimetro;
                 }
             }
-
             climaService.addClima(dia);
             dias.add(dia);
         }
@@ -72,8 +74,5 @@ public class Init extends Thread {
         }
 
         System.out.println("Termino la carga de datos!!!");
-    }
-    private void CreacionTablas(){
-
     }
 }

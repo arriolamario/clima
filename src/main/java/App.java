@@ -47,6 +47,13 @@ public class App implements SparkApplication {
 
             return gson.toJson(res);
         });
+
+        get("/clima/cargar", (request, response) -> {
+
+            new Init().tarea();
+
+            return "Inicio carga de datos";
+        });
     }
 
     @WebFilter(
